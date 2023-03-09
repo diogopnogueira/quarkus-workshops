@@ -1,34 +1,52 @@
 package com.example.room.repository;
 
-import com.example.room.mapper.RoomDTO;
-import com.example.room.domain.Room;
-import com.example.room.mapper.RoomMapper;
+import com.example.room.repository.domain.RoomEntity;
+import com.example.room.services.mapper.RoomMapper;
+import com.example.room.services.model.Room;
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
+import java.util.ArrayList;
+import java.util.List;
 
 @ApplicationScoped
-public class RoomRepository {
+public class RoomRepository implements PanacheRepository<RoomEntity> {
 
+    private List<RoomEntity> rooms = new ArrayList<>();
 
-    public String persistRoom(RoomDTO roomDTO) {
-        Room room = RoomMapper.mapToEntity(roomDTO);
-        return String.valueOf(room.id);
+    private static final Logger log = Logger.getLogger(RoomRepository.class);
+
+    public String persistRoom(Room room) {
+        RoomEntity roomEntity = RoomMapper.mapToEntity(room);
+        roomEntity.persistAndFlush();
+
+        log.info("Persist: " + roomEntity.id + " successful");
+        return String.valueOf(roomEntity.id);
     }
 
-    public RoomDTO getRoomById(String roomId) {
-        Room room = new Room("asd", "asd", 2, 33);
-        room.id = Long.parseLong(roomId);
-        return RoomMapper.mapToDTO(room);
-
+    public Room getRoomById(String roomId) {
+        return RoomMapper.mapToBusiness(findById(Long.valueOf(roomId)));
     }
 
 
-    public RoomDTO updateRoom(RoomDTO roomDTO) {
-        return new RoomDTO(roomDTO.getId(), roomDTO.getDesignation(), roomDTO.getMovieName(), roomDTO.getCapacity(),
-                roomDTO.getPrice());
+    public Room updateRoom(String roomIdToUpdate, Room newRoom) {
+        RoomEntity roomEntity = findById(Long.parseLong(roomIdToUpdate));
+        roomEntity.designation = newRoom.getDesignation();
+        roomEntity.currentMovie = newRoom.getCurrentMovie();
+        roomEntity.capacity = newRoom.getCapacity();
+        roomEntity.price = newRoom.getPrice();
+        roomEntity.persistAndFlush();
+
+        return RoomMapper.mapToBusiness(roomEntity);
     }
 
-    public boolean deleteRoom(String roomId) {
-        return true;
+    public void deleteRoom(String roomId) {
+        deleteById(Long.valueOf(roomId));
     }
+
+    public Room getRoomByDesignation(String roomDesignation) {
+        return RoomMapper.mapToBusiness(RoomEntity.find("designation", roomDesignation).firstResult());
+    }
+
 }
