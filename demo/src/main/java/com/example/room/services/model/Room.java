@@ -6,7 +6,6 @@ public class Room {
 
     private String id;
 
-
     private String designation;
 
     private String currentMovie;
@@ -35,32 +34,16 @@ public class Room {
         return designation;
     }
 
-    public void setDesignation(String designation) {
-        this.designation = designation;
-    }
-
     public String getCurrentMovie() {
         return currentMovie;
-    }
-
-    public void setCurrentMovie(String currentMovie) {
-        this.currentMovie = currentMovie;
     }
 
     public int getCapacity() {
         return capacity;
     }
 
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
-    }
-
     public double getPrice() {
         return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
     }
 
     @Override

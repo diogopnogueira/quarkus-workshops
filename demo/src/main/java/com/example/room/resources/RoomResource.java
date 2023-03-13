@@ -2,32 +2,45 @@ package com.example.room.resources;
 
 import com.example.room.resources.assembler.RoomAssembler;
 import com.example.room.resources.model.RoomDTO;
+import com.example.room.resources.model.UpdateRoomDTO;
 import com.example.room.services.RoomService;
+import com.example.room.services.model.Room;
 import org.jboss.logging.Logger;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Transactional
 @Path("room")
 public class RoomResource {
 
     private static final Logger log = Logger.getLogger(RoomResource.class);
 
-    @Inject
-    RoomService roomService;
+    private final RoomService roomService;
+
+    private final RoomAssembler roomAssembler;
+
+    public RoomResource(RoomService roomService, RoomAssembler roomAssembler) {
+        this.roomService = roomService;
+        this.roomAssembler = roomAssembler;
+    }
 
     @POST
     public Response createRoom(@Valid final RoomDTO newRoom) {
-        final String roomId = roomService.createRoom(RoomAssembler.assembleToBusiness(newRoom));
+        final Room room = roomAssembler.assembleRoomDtoToBusiness(newRoom);
+        final String roomId = roomService.createRoom(room);
 
         log.info("Room " + roomId + " created successfully");
         return Response.status(Status.CREATED).entity(roomId).build();
@@ -37,21 +50,22 @@ public class RoomResource {
     @Path("{roomId}")
     public Response getRoomById(
             @PathParam("roomId") @NotBlank final String roomId) {
-        final RoomDTO room = roomService.getRoomById(roomId);
+        final Room room = roomService.getRoomById(roomId);
+        final RoomDTO roomDTO = roomAssembler.assembleToDto(room);
 
-        log.info("Room get id " + room.getId() + " successfully");
-        return Response.ok(room).build();
+        log.info("Room get id " + roomDTO.getId() + " successfully");
+        return Response.ok(roomDTO).build();
     }
 
     @PUT
-    @Path("{roomId}")
     public Response updateRoom(
-            @PathParam("roomId") @NotBlank final String roomId,
-            @Valid final RoomDTO newRoom) {
-        final RoomDTO updatedRoom = roomService.updateRoom(roomId, RoomAssembler.assembleToBusiness(newRoom));
+            @Valid final UpdateRoomDTO updateRoomDTO) {
+        final Room room = roomAssembler.assembleUpdateRoomDtoToBusiness(updateRoomDTO);
+        final Room updatedRoom = roomService.updateRoom(room);
+        final RoomDTO updatedRoomDTO = roomAssembler.assembleToDto(updatedRoom);
 
-        log.info("Room " + roomId + " updated successfully");
-        return Response.ok(updatedRoom).build();
+        log.info("Room " + updatedRoomDTO.getId() + " updated successfully");
+        return Response.ok(updatedRoomDTO).build();
     }
 
     @DELETE

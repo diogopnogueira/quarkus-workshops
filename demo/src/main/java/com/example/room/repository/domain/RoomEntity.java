@@ -4,29 +4,10 @@ import io.quarkus.hibernate.orm.panache.PanacheEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import java.util.Objects;
 
-
-/**
- * Example JPA entity defined as a Panache Entity.
- * An ID field of Long type is provided, if you want to define your own ID field extends <code>PanacheEntityBase</code> instead.
- * <p>
- * This uses the active record pattern, you can also use the repository pattern instead:
- * .
- * <p>
- * Usage (more example on the documentation)
- * <p>
- * {@code
- * public void doSomething() {
- * MyEntity entity1 = new MyEntity();
- * entity1.field = "field-1";
- * entity1.persist();
- * <p>
- * List<MyEntity> entities = MyEntity.listAll();
- * }
- * }
- */
 @Entity(name = "room")
-public class RoomEntity extends PanacheEntity{
+public class RoomEntity extends PanacheEntity {
 
     @Column(name = "designation")
     public String designation;
@@ -49,6 +30,21 @@ public class RoomEntity extends PanacheEntity{
     }
 
     public RoomEntity() {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        RoomEntity that = (RoomEntity) o;
+
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
     }
 
 }

@@ -2,32 +2,37 @@ package com.example.resources;
 
 import com.example.room.resources.assembler.RoomAssembler;
 import com.example.room.resources.model.RoomDTO;
+import com.example.room.resources.model.UpdateRoomDTO;
 import com.example.room.services.RoomService;
 import com.example.room.services.exceptions.RoomException;
 import com.example.room.services.model.Room;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Mockito.when;
 
 @QuarkusTest
-public class RoomResourceTest {
+public class RoomResourceIT {
 
     @InjectMock
     RoomService roomService;
 
+    @InjectMock
+    RoomAssembler roomAssembler;
+
     @Test
     public void testCreateEndpoint() {
-        when(roomService.createRoom(Mockito.any(Room.class))).thenReturn("0");
+        RoomDTO roomDTO = new RoomDTO("asd", "asd", 33, 33);
+        Room room = new Room("", "asd", "asd", 33, 33);
+        when(roomAssembler.assembleRoomDtoToBusiness(roomDTO)).thenReturn(room);
+        when(roomService.createRoom(room)).thenReturn("0");
 
-        RoomDTO room = new RoomDTO("asd", "asd", 33, 33);
         given()
                 .contentType("application/json")
-                .body(room)
+                .body(roomDTO)
                 .when()
                 .post("/room")
                 .then()
@@ -49,8 +54,7 @@ public class RoomResourceTest {
     @Test
     public void testCreateEndpointThrowException() {
         RoomDTO room = new RoomDTO("bbb", "asd", 33, 33);
-        when(roomService.getRoomByDesignation(room.getDesignation())).thenReturn(null);
-        when(roomService.createRoom(RoomAssembler.assembleToBusiness(room))).thenThrow(RoomException.class);
+        when(roomService.createRoom(roomAssembler.assembleRoomDtoToBusiness(room))).thenThrow(RoomException.class);
 
         given()
                 .contentType("application/json")
@@ -63,8 +67,9 @@ public class RoomResourceTest {
 
     @Test
     public void testGetEndpoint() {
-        when(roomService.getRoomById("1"))
-                .thenReturn(new RoomDTO("1", "bbb", "ccc", 312, 312));
+        Room room = new Room("1", "bbb", "ccc", 312, 312);
+        when(roomService.getRoomById("1")).thenReturn(room);
+        when(roomAssembler.assembleToDto(room)).thenReturn(new RoomDTO("1", "bbb", "ccc", 312, 312));
 
         given()
                 .contentType("application/json")
@@ -98,18 +103,19 @@ public class RoomResourceTest {
     @Test
     public void testUpdateEndpoint() {
         String roomId = "1";
-        RoomDTO roomToUpdate = new RoomDTO(roomId, "bbb", "ccc", 312, 312);
+        UpdateRoomDTO updateRoomDTO = new UpdateRoomDTO(roomId, "asd", "asd", 33, 33.0);
         Room newRoom = new Room(roomId, "asd", "asd", 33, 33.0);
+        RoomDTO roomDTO = new RoomDTO(roomId, "asd", "asd", 33, 33.0);
 
-        when(roomService.getRoomById(roomId)).thenReturn(roomToUpdate);
-        when(roomService.updateRoom(roomId, newRoom)).thenReturn(RoomAssembler.assembleToDTO(newRoom));
+        when(roomAssembler.assembleUpdateRoomDtoToBusiness(updateRoomDTO)).thenReturn(newRoom);
+        when(roomService.updateRoom(newRoom)).thenReturn(newRoom);
+        when(roomAssembler.assembleToDto(newRoom)).thenReturn(roomDTO);
 
         given()
-                .pathParam("roomId", 1)
                 .contentType("application/json")
-                .body(new RoomDTO(roomId, "asd", "asd", 33, 33.0))
+                .body(updateRoomDTO)
                 .when()
-                .put("/room/{roomId}")
+                .put("/room")
                 .then()
                 .statusCode(200)
                 .contentType("application/json")
@@ -123,11 +129,10 @@ public class RoomResourceTest {
     @Test
     public void testUpdateEndpointWrongInput() {
         given()
-                .pathParam("roomId", 33)
                 .contentType("application/json")
-                .body(new RoomDTO("", "", 0, 0))
+                .body(new UpdateRoomDTO("", "", "", 0, 0))
                 .when()
-                .put("/room/{roomId}")
+                .put("/room")
                 .then()
                 .statusCode(400);
     }
@@ -135,9 +140,6 @@ public class RoomResourceTest {
 
     @Test
     public void testDeleteEndpoint() {
-        when(roomService.getRoomById("33"))
-                .thenReturn(new RoomDTO("33", "asd", "asd", 33, 33));
-
         given()
                 .contentType("application/json")
                 .pathParam("roomId", "33")
