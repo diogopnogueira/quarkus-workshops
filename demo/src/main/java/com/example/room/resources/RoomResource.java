@@ -48,8 +48,7 @@ public class RoomResource {
 
     @GET
     @Path("{roomId}")
-    public Response getRoomById(
-            @PathParam("roomId") @NotBlank final String roomId) {
+    public Response getRoomById(@PathParam("roomId") @NotBlank final String roomId) {
         final Room room = roomService.getRoomById(roomId);
         final RoomDTO roomDTO = roomAssembler.assembleToDto(room);
 
@@ -58,8 +57,7 @@ public class RoomResource {
     }
 
     @PUT
-    public Response updateRoom(
-            @Valid final UpdateRoomDTO updateRoomDTO) {
+    public Response updateRoom(@Valid final UpdateRoomDTO updateRoomDTO) {
         final Room room = roomAssembler.assembleUpdateRoomDtoToBusiness(updateRoomDTO);
         final Room updatedRoom = roomService.updateRoom(room);
         final RoomDTO updatedRoomDTO = roomAssembler.assembleToDto(updatedRoom);
@@ -70,8 +68,7 @@ public class RoomResource {
 
     @DELETE
     @Path("{roomId}")
-    public Response deleteRoom(
-            @PathParam("roomId") @NotBlank final String roomId) {
+    public Response deleteRoom(@PathParam("roomId") @NotBlank final String roomId) {
         roomService.deleteRoom(roomId);
 
         log.info("Room " + roomId + " deleted successfully");

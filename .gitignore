@@ -75,3 +75,13 @@ fabric.properties
 
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
+
+demo/.idea/
+demo/out/
+demo/target/
+demo/.classpath
+demo/.settings
+demo/.project
+demo/.DStore
+demo/log
+demo/TODO

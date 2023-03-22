@@ -8,7 +8,7 @@ import java.util.Objects;
 
 public class UpdateRoomDTO {
 
-    @NotBlank
+    @NotBlank(message = "Id cant be blank")
     private String id;
 
     @NotBlank(message = "Designation cant be blank")

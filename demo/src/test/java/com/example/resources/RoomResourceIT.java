@@ -12,6 +12,8 @@ import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 @QuarkusTest
@@ -52,7 +54,7 @@ public class RoomResourceIT {
     }
 
     @Test
-    public void testCreateEndpointThrowException() {
+    public void testCreateEndpointThrowRoomException() {
         RoomDTO room = new RoomDTO("bbb", "asd", 33, 33);
         when(roomService.createRoom(roomAssembler.assembleRoomDtoToBusiness(room))).thenThrow(RoomException.class);
 
@@ -127,6 +129,24 @@ public class RoomResourceIT {
     }
 
     @Test
+    public void testUpdateEndpointThrowException() {
+        String roomId = "1";
+        UpdateRoomDTO updateRoomDTO = new UpdateRoomDTO(roomId, "asd", "asd", 33, 33.0);
+        Room newRoom = new Room(roomId, "asd", "asd", 33, 33.0);
+
+        when(roomAssembler.assembleUpdateRoomDtoToBusiness(updateRoomDTO)).thenReturn(newRoom);
+        when(roomService.updateRoom(newRoom)).thenThrow(RoomException.class);
+
+        given()
+                .contentType("application/json")
+                .body(updateRoomDTO)
+                .when()
+                .put("/room")
+                .then()
+                .statusCode(409);
+    }
+
+    @Test
     public void testUpdateEndpointWrongInput() {
         given()
                 .contentType("application/json")
@@ -147,6 +167,19 @@ public class RoomResourceIT {
                 .delete("/room/{roomId}")
                 .then()
                 .statusCode(200);
+    }
+
+    @Test
+    public void testDeleteEndpointThrowException() {
+        doThrow(RoomException.class).when(roomService).deleteRoom(anyString());
+
+        given()
+                .contentType("application/json")
+                .pathParam("roomId", "33")
+                .when()
+                .delete("/room/{roomId}")
+                .then()
+                .statusCode(409);
     }
 
 

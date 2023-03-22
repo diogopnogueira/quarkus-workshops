@@ -114,6 +114,17 @@ class RoomServiceTest {
     }
 
     @Test
+    void testUpdateRoomThrowException() {
+        //        Given
+        Room newRoom = new Room("1", "asd", "asd", 33, 33);
+
+        //      When
+        when(roomRepository.getRoomById(newRoom.getId())).thenThrow(RoomException.class);
+        assertThrows(RoomException.class, () -> roomService.updateRoom(newRoom));
+    }
+
+
+    @Test
     void testDeleteRoom() {
         //      Given
         String id = "11";
@@ -122,6 +133,17 @@ class RoomServiceTest {
         //      When
         when(roomRepository.getRoomById(id)).thenReturn(room);
         assertDoesNotThrow(() -> roomService.deleteRoom(id));
+    }
+
+
+    @Test
+    void testDeleteRoomThrowException() {
+        //        Given
+        String id = "1";
+
+        //      When
+        when(roomRepository.getRoomById(anyString())).thenThrow(RoomException.class);
+        assertThrows(RoomException.class, () -> roomService.deleteRoom(id));
     }
 
     @Test
@@ -134,5 +156,6 @@ class RoomServiceTest {
         when(roomRepository.getRoomByDesignation(designation)).thenReturn(room);
         assertDoesNotThrow(() -> roomService.getRoomByDesignation(designation));
     }
+
 
 }
