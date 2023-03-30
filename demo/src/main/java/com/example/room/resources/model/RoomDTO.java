@@ -1,11 +1,17 @@
 package com.example.room.resources.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.Objects;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class RoomDTO {
 
     private String id;
@@ -27,17 +33,6 @@ public class RoomDTO {
     @NotNull
     private double price;
 
-    public RoomDTO(String id, String designation, String movieName, int capacity, double price) {
-        this.id = id;
-        this.designation = designation;
-        this.movieName = movieName;
-        this.capacity = capacity;
-        this.price = price;
-    }
-
-    public RoomDTO() {
-    }
-
     public RoomDTO(String designation, String movieName, int capacity, double price) {
         this.designation = designation;
         this.movieName = movieName;
@@ -45,50 +40,4 @@ public class RoomDTO {
         this.price = price;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public String getDesignation() {
-        return designation;
-    }
-
-    public String getMovieName() {
-        return movieName;
-    }
-
-    public int getCapacity() {
-        return capacity;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        RoomDTO roomDTO = (RoomDTO) o;
-
-        if (capacity != roomDTO.capacity) return false;
-        if (Double.compare(roomDTO.price, price) != 0) return false;
-        if (!Objects.equals(id, roomDTO.id)) return false;
-        if (!Objects.equals(designation, roomDTO.designation)) return false;
-        return Objects.equals(movieName, roomDTO.movieName);
-    }
-
-    @Override
-    public int hashCode() {
-        int result;
-        long temp;
-        result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (designation != null ? designation.hashCode() : 0);
-        result = 31 * result + (movieName != null ? movieName.hashCode() : 0);
-        result = 31 * result + capacity;
-        temp = Double.doubleToLongBits(price);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        return result;
-    }
 }

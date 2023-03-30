@@ -79,6 +79,17 @@
             <scope>test</scope>
             <version>${jacoco.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.26</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.4.6</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -92,17 +103,17 @@
                             <goal>build</goal>
                         </goals>
                     </execution>
-<!--                    <execution>-->
-<!--                        <phase>none</phase>-->
-<!--                        <id>run</id>-->
-<!--                        <goals>-->
-<!--                            <goal>dev</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            <jvmArgs>-Xdebug -Xrunjdwp:transport=dt_socket,address=*:5005,server=y,suspend=n</jvmArgs>-->
-<!--                            <debug>false</debug>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
+                    <!--                    <execution>-->
+                    <!--                        <phase>none</phase>-->
+                    <!--                        <id>run</id>-->
+                    <!--                        <goals>-->
+                    <!--                            <goal>dev</goal>-->
+                    <!--                        </goals>-->
+                    <!--                        <configuration>-->
+                    <!--                            <jvmArgs>-Xdebug -Xrunjdwp:transport=dt_socket,address=*:5005,server=y,suspend=n</jvmArgs>-->
+                    <!--                            <debug>false</debug>-->
+                    <!--                        </configuration>-->
+                    <!--                    </execution>-->
                 </executions>
             </plugin>
             <plugin>

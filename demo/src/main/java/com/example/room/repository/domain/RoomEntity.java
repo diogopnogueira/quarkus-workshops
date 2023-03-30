@@ -1,12 +1,14 @@
 package com.example.room.repository.domain;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import java.util.Objects;
 
 @Entity(name = "room")
+@NoArgsConstructor
 public class RoomEntity extends PanacheEntity {
 
     @Column(name = "designation")
@@ -27,9 +29,6 @@ public class RoomEntity extends PanacheEntity {
         this.currentMovie = currentMovie;
         this.capacity = capacity;
         this.price = price;
-    }
-
-    public RoomEntity() {
     }
 
     @Override

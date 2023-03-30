@@ -5,7 +5,8 @@ import com.example.room.repository.domain.RoomEntity;
 import com.example.room.services.exceptions.RoomException;
 import com.example.room.services.mapper.RoomMapper;
 import com.example.room.services.model.Room;
-import org.jboss.logging.Logger;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
@@ -14,18 +15,13 @@ import static javax.transaction.Transactional.TxType.NOT_SUPPORTED;
 
 @ApplicationScoped
 @Transactional
+@AllArgsConstructor
+@Slf4j
 public class RoomService {
-
-    private static final Logger log = Logger.getLogger(RoomService.class);
 
     private final RoomRepository roomRepository;
 
     private final RoomMapper roomMapper;
-
-    public RoomService(RoomRepository roomRepository, RoomMapper roomMapper) {
-        this.roomRepository = roomRepository;
-        this.roomMapper = roomMapper;
-    }
 
     public String createRoom(final Room newRoom) {
         final Room room = getRoomByDesignation(newRoom.getDesignation());

@@ -2,14 +2,13 @@ package com.example.room.repository;
 
 import com.example.room.repository.domain.RoomEntity;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
-import org.jboss.logging.Logger;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
+@Slf4j
 public class RoomRepository implements PanacheRepository<RoomEntity> {
-
-    private static final Logger log = Logger.getLogger(RoomRepository.class);
 
     public String persistRoom(RoomEntity roomEntity) {
         roomEntity.persistAndFlush();

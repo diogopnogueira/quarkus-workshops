@@ -5,6 +5,8 @@ import com.example.room.resources.model.RoomDTO;
 import com.example.room.resources.model.UpdateRoomDTO;
 import com.example.room.services.RoomService;
 import com.example.room.services.model.Room;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jboss.logging.Logger;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -24,18 +26,15 @@ import javax.ws.rs.core.Response.Status;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Path("room")
+@AllArgsConstructor
+@Slf4j
 public class RoomResource {
 
-    private static final Logger log = Logger.getLogger(RoomResource.class);
+//    private static final Logger log = Logger.getLogger(RoomResource.class);
 
     private final RoomService roomService;
 
     private final RoomAssembler roomAssembler;
-
-    public RoomResource(RoomService roomService, RoomAssembler roomAssembler) {
-        this.roomService = roomService;
-        this.roomAssembler = roomAssembler;
-    }
 
     @POST
     public Response createRoom(@Valid final RoomDTO newRoom) {
