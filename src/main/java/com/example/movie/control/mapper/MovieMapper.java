@@ -10,16 +10,16 @@ import javax.enterprise.context.ApplicationScoped;
 public class MovieMapper {
 
     public MovieEntity mapToEntity(Movie movie) {
-        MovieEntity movieEntity = new MovieEntity();
-        movieEntity.name = movie.getName();
-        movieEntity.genre = movie.getGenre();
-        movieEntity.duration = movie.getDuration();
-
-        return movieEntity;
+        return new MovieEntity(movie.getName(),
+                movie.getGenre(),
+                movie.getDuration());
     }
 
     public Movie mapToBusiness(MovieEntity movieEntity) {
-        return new Movie(String.valueOf(movieEntity.id), movieEntity.name, movieEntity.genre, movieEntity.duration);
+        return new Movie(String.valueOf(movieEntity.getId()),
+                movieEntity.getName(),
+                movieEntity.getGenre(),
+                movieEntity.getDuration());
     }
 
 }

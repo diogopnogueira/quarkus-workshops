@@ -1,30 +1,43 @@
 package com.example.room.entity.domain;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 import java.util.Objects;
 
+
 @Entity(name = "room")
+@NamedQuery(name = "RoomEntity.findByDesignation", query = "SELECT r FROM room r WHERE r.designation = :designation")
 @NoArgsConstructor
-public class RoomEntity extends PanacheEntity {
+@AllArgsConstructor
+@Getter
+@Setter
+public class RoomEntity {
+
+    @Id
+    @GeneratedValue
+    private Long id;
 
     @Column(name = "designation")
-    public String designation;
+    private String designation;
 
     @Column(name = "currentMovie")
-    public String currentMovie;
+    private String currentMovie;
 
     @Column(name = "capacity")
-    public int capacity;
+    private int capacity;
 
     @Column(name = "price")
-    public double price;
+    private double price;
 
-    public RoomEntity(Long id, String designation, String currentMovie, int capacity, double price) {
-        this.id = id;
+    public RoomEntity(String designation, String currentMovie, int capacity, double price) {
         this.designation = designation;
         this.currentMovie = currentMovie;
         this.capacity = capacity;

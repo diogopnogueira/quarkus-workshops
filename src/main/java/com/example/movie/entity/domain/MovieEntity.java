@@ -1,27 +1,39 @@
 package com.example.movie.entity.domain;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 import java.util.Objects;
 
 @Entity(name = "movie")
+@NamedQuery(name = "MovieEntity.findByName", query = "SELECT r FROM movie r WHERE r.name = :name")
 @NoArgsConstructor
-public class MovieEntity extends PanacheEntity {
+@AllArgsConstructor
+@Getter
+@Setter
+public class MovieEntity {
+
+    @Id
+    @GeneratedValue
+    private Long id;
 
     @Column(name = "name")
-    public String name;
+    private String name;
 
     @Column(name = "genre")
-    public String genre;
+    private String genre;
 
     @Column(name = "duration")
-    public int duration;
+    private int duration;
 
-    public MovieEntity(Long id, String name, String genre, int duration) {
-        this.id = id;
+    public MovieEntity(String name, String genre, int duration) {
         this.name = name;
         this.genre = genre;
         this.duration = duration;

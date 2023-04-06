@@ -1,14 +1,15 @@
 package com.example.room.control;
 
-import com.example.room.entity.RoomRepository;
-import com.example.room.entity.domain.RoomEntity;
 import com.example.room.control.exceptions.RoomException;
 import com.example.room.control.mapper.RoomMapper;
 import com.example.room.control.model.Room;
+import com.example.room.entity.RoomRepository;
+import com.example.room.entity.domain.RoomEntity;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.persistence.NoResultException;
 import javax.transaction.Transactional;
 
 import static javax.transaction.Transactional.TxType.NOT_SUPPORTED;
@@ -38,12 +39,16 @@ public class RoomService {
 
     @Transactional(NOT_SUPPORTED)
     public Room getRoomByDesignation(final String roomDesignation) {
-        RoomEntity roomByDesignation = roomRepository.getRoomByDesignation(roomDesignation);
+        try {
+            RoomEntity roomByDesignation = roomRepository.getRoomByDesignation(roomDesignation);
+            log.info("Get Room by Designation: " + roomDesignation);
 
-        log.info("Get Room by Designation: " + roomDesignation);
-        return roomByDesignation != null
-                ? roomMapper.mapToBusiness(roomByDesignation)
-                : null;
+            return roomMapper.mapToBusiness(roomByDesignation);
+        } catch (NoResultException e) {
+            log.info("Room with designation " + roomDesignation + " not found");
+
+            return null;
+        }
     }
 
     @Transactional(NOT_SUPPORTED)
@@ -59,7 +64,7 @@ public class RoomService {
         final RoomEntity newRoomEntity = roomMapper.mapToEntity(room);
         final RoomEntity updatedRoomEntity = roomRepository.updateRoom(roomEntity, newRoomEntity);
 
-        log.info("Update Room: " + updatedRoomEntity.id + " successfully!");
+        log.info("Update Room: " + updatedRoomEntity.getId() + " successfully!");
         return roomMapper.mapToBusiness(updatedRoomEntity);
     }
 

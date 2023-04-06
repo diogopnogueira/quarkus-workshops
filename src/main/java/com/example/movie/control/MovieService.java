@@ -1,14 +1,15 @@
 package com.example.movie.control;
 
-import com.example.movie.entity.MovieRepository;
-import com.example.movie.entity.domain.MovieEntity;
 import com.example.movie.control.exceptions.MovieException;
 import com.example.movie.control.mapper.MovieMapper;
 import com.example.movie.control.model.Movie;
+import com.example.movie.entity.MovieRepository;
+import com.example.movie.entity.domain.MovieEntity;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.persistence.NoResultException;
 import javax.transaction.Transactional;
 
 import static javax.transaction.Transactional.TxType.NOT_SUPPORTED;
@@ -37,12 +38,16 @@ public class MovieService {
 
     @Transactional(NOT_SUPPORTED)
     public Movie getMovieByName(String movieName) {
-        MovieEntity movieByName = movieRepository.getMovieByName(movieName);
+        try {
+            MovieEntity movieByName = movieRepository.getMovieByName(movieName);
+            log.info("Get Movie by Designation: " + movieName);
 
-        log.info("Get Movie by name: " + movieName);
-        return movieByName != null
-                ? movieMapper.mapToBusiness(movieByName)
-                : null;
+            return movieMapper.mapToBusiness(movieByName);
+        } catch (NoResultException e) {
+            log.info("Movie with designation " + movieName + " not found");
+
+            return null;
+        }
     }
 
     @Transactional(NOT_SUPPORTED)
@@ -57,7 +62,7 @@ public class MovieService {
         final MovieEntity newMovieEntity = movieMapper.mapToEntity(movie);
         final MovieEntity updatedMovieEntity = movieRepository.updateMovie(movieEntity, newMovieEntity);
 
-        log.info("Update Movie: " + updatedMovieEntity.id + " successfully!");
+        log.info("Update Movie: " + updatedMovieEntity.getId() + " successfully!");
         return movieMapper.mapToBusiness(updatedMovieEntity);
     }
 
