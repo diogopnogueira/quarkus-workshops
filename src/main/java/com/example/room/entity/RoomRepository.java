@@ -1,43 +1,46 @@
 package com.example.room.entity;
 
 import com.example.room.entity.domain.RoomEntity;
-import io.quarkus.hibernate.orm.panache.PanacheRepository;
-import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 
 @ApplicationScoped
-@Slf4j
-public class RoomRepository implements PanacheRepository<RoomEntity> {
+public class RoomRepository {
+
+    @Inject
+    EntityManager entityManager;
 
     public String persistRoom(RoomEntity roomEntity) {
-        roomEntity.persistAndFlush();
+        entityManager.persist(roomEntity);
 
-        log.info("Persist: " + roomEntity.id + " successful");
-        return String.valueOf(roomEntity.id);
+        return String.valueOf(roomEntity.getId());
     }
 
     public RoomEntity getRoomById(String roomId) {
-        return findById(Long.valueOf(roomId));
+        return entityManager.find(RoomEntity.class, Long.parseLong(roomId));
     }
 
-
     public RoomEntity updateRoom(RoomEntity roomEntity, RoomEntity newRoomEntity) {
-        roomEntity.designation = newRoomEntity.designation;
-        roomEntity.currentMovie = newRoomEntity.currentMovie;
-        roomEntity.capacity = newRoomEntity.capacity;
-        roomEntity.price = newRoomEntity.price;
-        roomEntity.persistAndFlush();
+        roomEntity.setDesignation(newRoomEntity.getDesignation());
+        roomEntity.setCurrentMovie(newRoomEntity.getCurrentMovie());
+        roomEntity.setCapacity(newRoomEntity.getCapacity());
+        roomEntity.setPrice(newRoomEntity.getPrice());
 
-        return roomEntity;
+        return entityManager.merge(roomEntity);
     }
 
     public void deleteRoom(RoomEntity room) {
-        deleteById(room.id);
+        entityManager.remove(room);
     }
 
     public RoomEntity getRoomByDesignation(String roomDesignation) {
-        return RoomEntity.find("designation", roomDesignation).firstResult();
+        TypedQuery<RoomEntity> query = entityManager.createNamedQuery("RoomEntity.findByDesignation", RoomEntity.class);
+        query.setParameter("designation", roomDesignation);
+
+        return query.getSingleResult();
     }
 
 }

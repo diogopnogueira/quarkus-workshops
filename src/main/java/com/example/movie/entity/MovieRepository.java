@@ -1,41 +1,46 @@
 package com.example.movie.entity;
 
 import com.example.movie.entity.domain.MovieEntity;
-import io.quarkus.hibernate.orm.panache.PanacheRepository;
-import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 
 @ApplicationScoped
-@Slf4j
-public class MovieRepository implements PanacheRepository<MovieEntity> {
+public class MovieRepository {
+
+    @Inject
+    EntityManager entityManager;
 
     public String persistMovie(MovieEntity movieEntity) {
-        movieEntity.persistAndFlush();
+        entityManager.persist(movieEntity);
 
-        log.info("Persist: " + movieEntity.id + " successful");
-        return String.valueOf(movieEntity.id);
+        return String.valueOf(movieEntity.getId());
     }
 
 
     public MovieEntity getMovieByName(String movieName) {
-        return MovieEntity.find("name", movieName).firstResult();
+        TypedQuery<MovieEntity> query = entityManager.createNamedQuery("MovieEntity.findByName", MovieEntity.class);
+        query.setParameter("name", movieName);
+
+        return query.getSingleResult();
     }
 
     public MovieEntity getMovieById(String movieId) {
-        return findById(Long.valueOf(movieId));
+        return entityManager.find(MovieEntity.class, Long.valueOf(movieId));
     }
 
     public MovieEntity updateMovie(MovieEntity movieEntity, MovieEntity newMovieEntity) {
-        movieEntity.name = newMovieEntity.name;
-        movieEntity.genre = newMovieEntity.genre;
-        movieEntity.duration = newMovieEntity.duration;
-        movieEntity.persistAndFlush();
+        movieEntity.setName(newMovieEntity.getName());
+        movieEntity.setGenre(newMovieEntity.getGenre());
+        movieEntity.setDuration(newMovieEntity.getDuration());
 
-        return movieEntity;
+        return entityManager.merge(movieEntity);
+
     }
 
-    public void deleteMovie(MovieEntity movie) {
-        deleteById(movie.id);
+    public void deleteMovie(MovieEntity movieEntity) {
+        entityManager.remove(movieEntity);
     }
 }

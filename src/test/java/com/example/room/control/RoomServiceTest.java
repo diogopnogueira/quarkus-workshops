@@ -40,6 +40,7 @@ class RoomServiceTest {
 //      When
         when(roomMapper.mapToEntity(room)).thenReturn(roomEntity);
         when(roomRepository.persistRoom(roomEntity)).thenReturn(id);
+
         String roomId = assertDoesNotThrow(() -> roomService.createRoom(room));
 
 //      Then
